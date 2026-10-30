@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piscina360 Colombia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: franja de azulejo arriba, hero con cotizador al lado, servicios en grilla, cómo funciona en pasos */
+:root{
+  --bg:#f3f8f8; --surface:#ffffff; --ink:#0c2a33; --muted:#4d6870;
+  --pool:#0b6e7a; --pool-deep:#08434c; --tile:#d7ebec; --line:#c5dcdf;
+  --sun:#f2b632; --ok:#1d8a5a;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#071a1f; --surface:#0d262d; --ink:#e4f2f3; --muted:#9bb8be;
+  --pool:#3fb3bf; --pool-deep:#0a3a42; --tile:#123139; --line:#1f434c;
+  --sun:#f5c457; --ok:#4cc38a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#071a1f; --surface:#0d262d; --ink:#e4f2f3; --muted:#9bb8be;
+  --pool:#3fb3bf; --pool-deep:#0a3a42; --tile:#123139; --line:#1f434c;
+  --sun:#f5c457; --ok:#4cc38a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);line-height:1.08;text-wrap:balance;margin:0}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pool)}
+
+/* franja de azulejo */
+.tiles{height:14px;background:
+  linear-gradient(90deg,var(--pool) 1px,transparent 1px) 0 0/14px 14px,
+  linear-gradient(var(--pool) 1px,transparent 1px) 0 0/14px 14px,var(--tile);opacity:.9}
+
+header.top{padding-block:18px}
+header.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.01em}
+.brand b{color:var(--pool)}
+.pill{font-family:var(--f-mono);font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+
+.hero{padding-block:28px 56px}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:start}
+.hero h1{font-size:clamp(36px,6vw,64px);font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--pool)}
+.lead{margin-top:18px;font-size:18px;color:var(--muted);max-width:52ch}
+.facts{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.fact{border-top:2px solid var(--pool);padding-top:10px}
+.fact strong{display:block;font-family:var(--f-display);font-size:26px}
+.fact span{font-size:13px;color:var(--muted)}
+.water{margin-top:28px;font-family:var(--f-mono);font-size:13px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+.water i{font-style:normal;color:var(--ink)}
+
+/* cotizador */
+.quote{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 18px 40px -24px rgba(8,67,76,.45)}
+.quote h2{font-size:24px}
+.quote .sub{color:var(--muted);font-size:14px;margin-top:4px}
+form{display:grid;gap:14px;margin-top:18px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+label{display:grid;gap:5px;font-size:13px;font-weight:600}
+label small{font-weight:400;color:var(--muted)}
+input,select{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 11px;width:100%;min-width:0}
+input:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--pool);outline-offset:2px}
+.calc{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.btn{font:inherit;font-weight:700;border:0;border-radius:10px;padding:13px 16px;cursor:pointer;background:var(--pool);color:#fff;text-decoration:none;text-align:center;display:inline-block}
+.btn:hover{background:var(--pool-deep)}
+.btn.ghost{background:transparent;color:var(--pool);border:1px solid var(--pool)}
+.btn.ghost:hover{background:var(--tile)}
+
+.result{margin-top:16px;border-top:1px dashed var(--line);padding-top:16px;display:grid;gap:12px}
+.code{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.range{font-family:var(--f-display);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.range small{font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--muted);display:block}
+.lines{font-size:14px;display:grid;gap:4px}
+.lines div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-block:4px}
+.lines span:last-child{font-family:var(--f-mono);font-size:13px;text-align:right}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.actions .btn{flex:1 1 160px}
+.note{font-size:12px;color:var(--muted)}
+.toast{font-size:13px;color:var(--ok);font-weight:600}
+
+/* servicios */
+section.block{padding-block:56px;border-top:1px solid var(--line)}
+section.block h2{font-size:clamp(28px,4vw,40px);margin-top:8px}
+.grid{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.svc{background:var(--surface);padding:20px;display:grid;gap:6px;align-content:start}
+.svc h3{font-size:19px}
+.svc p{font-size:14px;color:var(--muted)}
+.svc .tag{font-family:var(--f-mono);font-size:11px;color:var(--pool);letter-spacing:.06em;text-transform:uppercase}
+
+.steps{margin-top:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:s}
+.step{counter-increment:s;display:grid;gap:6px}
+.step::before{content:counter(s);font-family:var(--f-display);font-weight:800;font-size:40px;color:var(--pool);line-height:1}
+.step h3{font-size:18px}
+.step p{font-size:14px;color:var(--muted)}
+
+.for{margin-top:24px;display:flex;flex-wrap:wrap;gap:10px}
+.for span{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:14px}
+
+footer{padding-block:32px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}
+}
+@media (max-width:520px){
+  .grid,.steps{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr}
+  .facts{grid-template-columns:1fr 1fr 1fr}
+  .fact strong{font-size:20px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--tile);padding:4px;border-radius:10px;margin-top:14px}
+.tabs button{font:inherit;font-weight:700;font-size:14px;border:0;border-radius:8px;padding:10px 6px;cursor:pointer;background:transparent;color:var(--muted)}
+.tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.err{font-size:13px;color:#c0392b;font-weight:600}
+.ejemplo{font-family:var(--f-mono);font-size:11px;background:var(--sun);color:#0c2a33;padding:2px 6px;border-radius:4px;margin-left:6px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+
+<div class="tiles" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Piscina<b>360</b> Colombia</div>
+    <div class="pill">Cotización en 1 minuto · todo el país</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow" id="heroEye">Piscinas · Spas · Saunas · Turcos</p>
+      <h1 id="heroH1">Tu piscina lista, <em>sin buscar contratista.</em></h1>
+      <p class="lead" id="heroLead">Construcción, mantenimiento, impermeabilización y fugas. Nos dices medidas y ciudad, te damos un precio estimado y coordinamos el trabajo con un equipo técnico con más de 30 años en obra.</p>
+      <div class="facts">
+        <div class="fact"><strong>30+</strong><span>años de experiencia técnica</span></div>
+        <div class="fact"><strong>24 h</strong><span>respuesta a tu cotización</span></div>
+        <div class="fact"><strong>1</strong><span>solo contacto para todo</span></div>
+      </div>
+      <div class="water" id="water">
+        <span>pH ideal <i>7,2 – 7,6</i></span>
+        <span>Cloro libre <i>1 – 3 ppm</i></span>
+        <span>Recirculación <i>cada 6 h</i></span>
+      </div>
+    </div>
+
+    <div class="quote">
+      <h2>Cotiza tu servicio</h2>
+      <p class="sub">Precio estimado al instante. El valor final se confirma con visita técnica.</p>
+      <!-- ////////// pestañas de línea -->
+      <div class="tabs" id="tabs" role="group" aria-label="Línea de servicio">
+        <button type="button" data-l="piscinas" aria-pressed="true">Piscinas</button>
+        <button type="button" data-l="fumigacion" aria-pressed="false">Fumigación</button>
+      </div>
+      <form id="f" novalidate>
+        <label for="servicio">Servicio
+          <select id="servicio"></select>
+        </label>
+        <div class="row">
+          <label for="cliente">Tipo de cliente
+            <select id="cliente"></select>
+          </label>
+          <label for="ciudad">Ciudad
+            <input id="ciudad" list="ciudades" value="Barranquilla" autocomplete="address-level2">
+            <datalist id="ciudades">
+              <option>Barranquilla</option><option>Cartagena</option><option>Santa Marta</option><option>Riohacha</option><option>Valledupar</option><option>Montería</option><option>Sincelejo</option><option>Bogotá</option><option>Medellín</option><option>Cali</option><option>Bucaramanga</option><option>Cúcuta</option><option>Villavicencio</option><option>Neiva</option><option>Pereira</option>
+            </datalist>
+          </label>
+        </div>
+        <div id="medPisc">
+          <div class="row3">
+            <label for="largo">Largo <small>m</small><input id="largo" type="number" min="1" step="0.5" value="8" inputmode="decimal"></label>
+            <label for="ancho">Ancho <small>m</small><input id="ancho" type="number" min="1" step="0.5" value="4" inputmode="decimal"></label>
+            <label for="prof">Prof. media <small>m</small><input id="prof" type="number" min="0.5" step="0.1" value="1.4" inputmode="decimal"></label>
+          </div>
+          <div class="calc" id="calc" style="margin-top:8px"></div>
+        </div>
+        <!-- ////////// medidas fumigación -->
+        <div id="medFum" hidden>
+          <label for="area">Área a fumigar <small>m² aproximados (casa típica 60 – 120 m²)</small>
+            <input id="area" type="number" min="10" step="5" value="80" inputmode="numeric">
+          </label>
+        </div>
+        <div class="row">
+          <label for="nombre">Nombre *<input id="nombre" value="" placeholder="Ej. María Pérez" autocomplete="name"></label>
+          <label for="tel">Celular *<input id="tel" type="tel" placeholder="300 000 0000" autocomplete="tel"></label>
+        </div>
+        <div class="err" id="err" hidden></div>
+        <button class="btn" type="submit" id="go">Ver precio estimado</button>
+      </form>
+
+      <div class="result" id="res" hidden>
+        <div class="code" id="rcode"></div>
+        <div class="range" id="rrange"></div>
+        <div class="lines" id="rlines"></div>
+        <div class="actions">
+          <a class="btn" id="wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+          <button class="btn ghost" type="button" id="copy">Copiar cotización</button>
+        </div>
+        <div class="toast" id="toast" hidden></div>
+        <p class="note">Estimado de referencia. Incluye mano de obra y materiales base; no incluye obra civil adicional ni transporte fuera del área metropolitana.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">Lo que hacemos</p>
+    <h2>Un solo contacto para toda la piscina</h2>
+    <div class="grid" id="svcGrid"></div>
+  </div>
+</section>
+
+<!-- ////////// sección fumigación -->
+<section class="block" id="fumigacion">
+  <div class="wrap">
+    <p class="eyebrow">Fumigación y control de plagas</p>
+    <h2 id="fumH2">Fumigación profesional</h2>
+    <p class="lead">Casas, conjuntos, restaurantes, bodegas y empresas. Cucarachas, roedores, comején, zancudos y desinfección de ambientes.</p>
+    <div class="grid" id="fumGrid"></div>
+    <div style="margin-top:20px"><button class="btn" type="button" id="irFum">Cotizar fumigación</button></div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">Cómo funciona</p>
+    <h2>De la cotización a la piscina limpia</h2>
+    <div class="steps">
+      <div class="step"><h3>Cotizas aquí</h3><p>Medidas, ciudad y servicio. Ves un precio estimado al momento.</p></div>
+      <div class="step"><h3>Te escribimos</h3><p>Confirmamos detalles por WhatsApp en menos de 24 horas.</p></div>
+      <div class="step"><h3>Visita técnica</h3><p>Medimos, revisamos equipos y te damos el precio final por escrito.</p></div>
+      <div class="step"><h3>Ejecución</h3><p>El equipo técnico hace el trabajo y tú tienes un solo responsable.</p></div>
+    </div>
+    <div class="for">
+      <span>Casas y fincas</span><span>Conjuntos residenciales</span><span>Hoteles y clubes</span><span>Colegios</span><span>Constructoras</span><span>Entidades públicas</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Piscina360 Colombia · Atención lunes a sábado</span>
+    <span id="waText"></span>
+  </div>
+</footer>
+
+<script>
+/* ============ CONFIGURA AQUÍ ============ */
+////////// SUPABASE
+const SUPA_URL = "https://ppjvrmpklqaasggsrckl.supabase.co";   // Project Settings > API > Project URL
+const SUPA_KEY = "sb_publishable_06zVT3r4225wFf8ph19vmQ_LDfptCP_";                       // Project Settings > API > anon public
+const WA_NUMERO = "573016767680"; // tu WhatsApp con 57 adelante, sin + ni espacios
+const MARGEN = 1.0;               // multiplica precios (1.15 = +15% tu comisión)
+/* Precios de REFERENCIA en COP: ajústalos con tu proveedor.
+   unidad: "m2" = por m² de lámina de agua, "m3" = por m³, "fijo" = valor fijo, "mes" = mensual por m² */
+const SERVICIOS = [
+  {id:"mant",   nombre:"Mantenimiento mensual",       tag:"Recurrente", unidad:"mes",  min:12000,  max:18000,  base:250000,  desc:"Limpieza, aspirado, balance de pH y cloro, revisión de bomba y filtro."},
+  {id:"const",  nombre:"Construcción de piscina",      tag:"Obra",       unidad:"m3",   min:1800000,max:2600000,base:0,       desc:"Diseño, excavación, estructura, enchape y equipo de filtración."},
+  {id:"imper",  nombre:"Impermeabilización",           tag:"Reparación", unidad:"m2",   min:90000,  max:140000, base:400000,  desc:"Tratamiento de vaso y juntas para frenar pérdidas de agua."},
+  {id:"fugas",  nombre:"Detección y corrección de fugas",tag:"Reparación",unidad:"fijo",min:450000, max:900000, base:0,       desc:"Prueba de estanqueidad, ubicación de la fuga y corrección."},
+  {id:"equipo", nombre:"Equipos: bomba y filtro",      tag:"Equipos",    unidad:"m3",   min:45000,  max:70000,  base:600000,  desc:"Suministro e instalación dimensionados al volumen de tu piscina."},
+  {id:"quim",   nombre:"Químicos (kit mensual)",       tag:"Suministro", unidad:"m3",   min:6000,   max:9000,   base:60000,   desc:"Cloro, reguladores de pH, clarificador y alguicida."},
+  {id:"spa",    nombre:"Spa / jacuzzi",                tag:"Venta",      unidad:"fijo", min:9000000,max:22000000,base:0,      desc:"Venta e instalación de spas para casa, hotel o club."},
+  {id:"sauna",  nombre:"Sauna o baño turco",           tag:"Obra",       unidad:"fijo", min:12000000,max:28000000,base:0,     desc:"Diseño y construcción de zonas húmedas."},
+  {id:"hidra",  nombre:"Diseño hidráulico",            tag:"Ingeniería", unidad:"fijo", min:1500000,max:4000000, base:0,      desc:"Planos, memorias de cálculo y listado de equipos según norma."}
+];
+////////// FUMIGACIÓN
+const MARCA_FUM = "Army Navy";   // nombre que se muestra; déjalo "" para no mostrarlo
+/* Precios de REFERENCIA en COP: ajústalos con Army Navy */
+const SERVICIOS_FUM = [
+  {id:"fgen",  nombre:"Fumigación general",              tag:"Plagas",      unidad:"m2",  min:900,   max:1600,  base:70000,  desc:"Cucarachas, hormigas, arañas, pulgas y chinches."},
+  {id:"roed",  nombre:"Control de roedores",             tag:"Roedores",    unidad:"m2",  min:600,   max:1100,  base:90000,  desc:"Cebaderos, sellado de entradas y seguimiento."},
+  {id:"desin", nombre:"Desinfección de ambientes",       tag:"Higiene",     unidad:"m2",  min:700,   max:1300,  base:60000,  desc:"Virus, bacterias y hongos en superficies y aire."},
+  {id:"term",  nombre:"Control de comején (termitas)",   tag:"Madera",      unidad:"m2",  min:6000,  max:12000, base:150000, desc:"Tratamiento de muebles, puertas, techos y estructura."},
+  {id:"zanc",  nombre:"Control de zancudos",             tag:"Exteriores",  unidad:"m2",  min:500,   max:900,   base:60000,  desc:"Nebulización en patios, jardines y zonas comunes."},
+  {id:"tanq",  nombre:"Lavado y desinfección de tanques",tag:"Agua",        unidad:"fijo",min:180000,max:350000,base:0,      desc:"Tanques elevados y subterráneos, con certificado."},
+  {id:"plan",  nombre:"Plan mensual para empresas",      tag:"Recurrente",  unidad:"mes", min:500,   max:900,   base:120000, desc:"Visitas programadas y certificado para Secretaría de Salud."}
+];
+const CLIENTES = {
+  piscinas:  [["casa","Casa / finca"],["conjunto","Conjunto residencial"],["hotel","Hotel / club"],["institucion","Colegio / empresa"]],
+  fumigacion:[["casa","Casa"],["apto","Apartamento"],["conjunto","Conjunto residencial"],["local","Local / oficina"],["restaurante","Restaurante"],["bodega","Bodega / industria"]]
+};
+const FACTOR_CLIENTE = {casa:1, apto:0.9, conjunto:1.15, hotel:1.25, institucion:1.2, local:1.1, restaurante:1.3, bodega:1.2};
+const HERO = {
+  piscinas:  {eye:"Piscinas · Spas · Saunas · Turcos", h1:'Tu piscina lista, <em>sin buscar contratista.</em>',
+              lead:"Construcción, mantenimiento, impermeabilización y fugas. Nos dices medidas y ciudad, te damos un precio estimado y coordinamos el trabajo con un equipo técnico con más de 30 años en obra."},
+  fumigacion:{eye:"Fumigación · Control de plagas · Desinfección", h1:'Tu casa sin plagas, <em>con certificado.</em>',
+              lead:"Cucarachas, roedores, comején, zancudos y desinfección. Nos dices el área y la ciudad, te damos un precio estimado y coordinamos la visita."}
+};
+const AREA_LOCAL = ["barranquilla","soledad","puerto colombia","malambo","galapa"];
+/* ======================================== */
+
+const $ = id => document.getElementById(id);
+////////// cliente supabase + origen del anuncio (?src=fb, ?src=ig, ?src=wa)
+let db = null;
+try{ if(window.supabase && !SUPA_KEY.startsWith("TU-")) db = window.supabase.createClient(SUPA_URL, SUPA_KEY); }catch(_){}
+let ORIGEN = "directo";
+try{ ORIGEN = new URLSearchParams(location.search).get("src") || "directo"; }catch(_){}
+const fmt = n => "$" + (Math.round(n/1000)*1000).toLocaleString("es-CO");
+
+// llenar selects y grilla
+////////// línea activa (piscinas / fumigacion)
+let LINEA = "piscinas";
+try{ if(new URLSearchParams(location.search).get("linea")==="fumigacion") LINEA="fumigacion"; }catch(_){}
+const LISTA = () => LINEA==="fumigacion" ? SERVICIOS_FUM : SERVICIOS;
+function setLinea(l){
+  LINEA = l;
+  $("servicio").innerHTML = LISTA().map(s=>`<option value="${s.id}">${s.nombre}</option>`).join("");
+  $("cliente").innerHTML = CLIENTES[l].map(([v,t])=>`<option value="${v}">${t}</option>`).join("");
+  $("medPisc").hidden = l==="fumigacion";
+  $("medFum").hidden  = l!=="fumigacion";
+  $("water").hidden   = l==="fumigacion";
+  $("heroEye").textContent = HERO[l].eye;
+  $("heroH1").innerHTML    = HERO[l].h1;
+  $("heroLead").textContent= HERO[l].lead;
+  document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.l===l));
+}
+setLinea(LINEA);
+$("tabs").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-l]"); if(!b) return;
+  setLinea(b.dataset.l); mostrar(true);
+});
+$("fumGrid").innerHTML = SERVICIOS_FUM.map(s=>`<div class="svc"><span class="tag">${s.tag}</span><h3>${s.nombre}</h3><p>${s.desc}</p></div>`).join("");
+$("fumH2").textContent = MARCA_FUM ? "Fumigación con " + MARCA_FUM : "Fumigación profesional";
+$("irFum").addEventListener("click", ()=>{
+  setLinea("fumigacion"); mostrar(true);
+  document.querySelector(".quote").scrollIntoView({behavior:"smooth", block:"start"});
+});
+$("svcGrid").innerHTML = SERVICIOS.map(s=>`<div class="svc"><span class="tag">${s.tag}</span><h3>${s.nombre}</h3><p>${s.desc}</p></div>`).join("");
+$("waText").textContent = "WhatsApp: +" + WA_NUMERO;
+
+function medidas(){
+  if(LINEA==="fumigacion"){ const ar=+$("area").value||0; return {l:0,a:0,p:0,m2:ar,m3:0}; }
+  const l=+$("largo").value||0, a=+$("ancho").value||0, p=+$("prof").value||0;
+  return {l,a,p,m2:l*a,m3:l*a*p};
+}
+function pintaCalc(){
+  const m=medidas();
+  $("calc").innerHTML = `<span>Área ${m.m2.toFixed(1)} m²</span><span>Volumen ${m.m3.toFixed(1)} m³</span><span>≈ ${Math.round(m.m3*1000).toLocaleString("es-CO")} litros</span>`;
+}
+["largo","ancho","prof"].forEach(id=>$(id).addEventListener("input",pintaCalc));
+pintaCalc();
+
+function cotizar(){
+  const s = LISTA().find(x=>x.id===$("servicio").value);
+  const m = medidas();
+  const fc = FACTOR_CLIENTE[$("cliente").value];
+  const ciudad = $("ciudad").value.trim() || "Sin ciudad";
+  const fuera = !AREA_LOCAL.includes(ciudad.toLowerCase());
+  const cant = s.unidad==="m2"||s.unidad==="mes" ? m.m2 : s.unidad==="m3" ? m.m3 : 1;
+  let lo = (s.base + s.min*cant)*fc*MARGEN;
+  let hi = (s.base + s.max*cant)*fc*MARGEN;
+  const code = "COT-" + Date.now().toString().slice(-6);
+  const per = s.unidad==="mes" ? " / mes" : "";
+  return {linea:LINEA,s,m,ciudad,fuera,lo,hi,code,per,cliente:$("cliente").selectedOptions[0].text,
+          nombre:$("nombre").value.trim(), tel:$("tel").value.trim()};
+}
+
+let ultimo = "";
+function mostrar(ejemplo){
+  const c = cotizar();
+  ////////// texto de medidas según línea
+  const esFum = c.linea==="fumigacion";
+  const medTxt = esFum ? `${c.m.m2} m²` : `${c.m.l} x ${c.m.a} x ${c.m.p} m (${c.m.m3.toFixed(1)} m³)`;
+  $("rcode").innerHTML = (ejemplo ? "Ejemplo" : c.code) + " · " + new Date().toLocaleDateString("es-CO") + (ejemplo ? '<span class="ejemplo">EJEMPLO</span>' : "");
+  $("rrange").innerHTML = `${fmt(c.lo)} – ${fmt(c.hi)}${c.per}<small>${c.s.nombre} · ${c.ciudad}</small>`;
+  const filas = [
+    ["Cliente", c.cliente],
+    ...(esFum ? [["Área", `${c.m.m2} m²`]] : [["Medidas", `${c.m.l} × ${c.m.a} × ${c.m.p} m`],["Volumen", `${c.m.m3.toFixed(1)} m³`]]),
+    ["Desplazamiento", c.fuera ? "Fuera del área: se cotiza aparte" : "Incluido"]
+  ];
+  $("rlines").innerHTML = filas.map(f=>`<div><span>${f[0]}</span><span>${f[1]}</span></div>`).join("");
+  ultimo =
+`Hola, quiero esta cotización:
+${c.code}
+Servicio: ${c.s.nombre}
+Cliente: ${c.cliente}
+Ciudad: ${c.ciudad}
+Línea: ${esFum ? "Fumigación" : "Piscinas"}
+Medidas: ${medTxt}
+Estimado: ${fmt(c.lo)} - ${fmt(c.hi)}${c.per}
+Nombre: ${c.nombre || "-"}
+Celular: ${c.tel || "-"}`;
+  $("wa").href = "https://wa.me/" + WA_NUMERO + "?text=" + encodeURIComponent(ultimo);
+  $("res").hidden = false;
+  $("toast").hidden = true;
+  return c;
+}
+
+////////// guardar cotización en Supabase
+async function guardar(c){
+  if(!db) return;
+  try{
+    await db.from("cotizaciones").insert({
+      codigo:c.code, linea:c.linea, area_m2:(c.linea==="fumigacion" ? c.m.m2 : null), servicio:c.s.nombre, cliente_tipo:c.cliente, ciudad:c.ciudad,
+      largo:c.m.l, ancho:c.m.a, prof:c.m.p, m3:+c.m.m3.toFixed(1),
+      estimado_min:Math.round(c.lo), estimado_max:Math.round(c.hi),
+      nombre:c.nombre, celular:c.tel, origen:ORIGEN
+    });
+  }catch(_){}
+}
+$("f").addEventListener("submit", e=>{
+  e.preventDefault();
+  const nom=$("nombre").value.trim(), tel=$("tel").value.replace(/\D/g,"");
+  if(nom.length<2 || tel.length<7){
+    $("err").textContent="Escribe tu nombre y un celular válido para ver el precio.";
+    $("err").hidden=false; return;
+  }
+  $("err").hidden=true;
+  const c = mostrar(false);
+  guardar(c);
+});
+$("copy").addEventListener("click", ()=>{
+  const ok = ()=>{$("toast").textContent="Cotización copiada. Pégala en WhatsApp."; $("toast").hidden=false;};
+  try{
+    navigator.clipboard.writeText(ultimo).then(ok).catch(()=>{fallback(); ok();});
+  }catch(_){fallback(); ok();}
+});
+function fallback(){
+  const t=document.createElement("textarea"); t.value=ultimo; document.body.appendChild(t); t.select();
+  try{document.execCommand("copy");}catch(_){}
+  t.remove();
+}
+mostrar(true); // abre con un ejemplo calculado (no se guarda)
+</script>
+
+</body>
+</html>

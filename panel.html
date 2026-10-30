@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Panel Piscina360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Panel: barra de números arriba, filtros, tarjetas de clientes en grilla */
+:root{
+  --bg:#f3f8f8; --surface:#ffffff; --ink:#0c2a33; --muted:#4d6870;
+  --pool:#0b6e7a; --pool-deep:#08434c; --tile:#d7ebec; --line:#c5dcdf;
+  --nuevo:#f2b632; --contactado:#3b82c4; --enviado:#8a5cc7; --cerrado:#1d8a5a; --perdido:#9aa5a8;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#071a1f; --surface:#0d262d; --ink:#e4f2f3; --muted:#9bb8be;
+  --pool:#3fb3bf; --pool-deep:#0a3a42; --tile:#123139; --line:#1f434c; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2{font-family:var(--f-display);margin:0;line-height:1.1}
+.tiles{height:10px;background:linear-gradient(90deg,var(--pool) 1px,transparent 1px) 0 0/10px 10px,linear-gradient(var(--pool) 1px,transparent 1px) 0 0/10px 10px,var(--tile)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:54px}
+button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:10px 14px;cursor:pointer;background:var(--pool);color:#fff}
+button:hover{background:var(--pool-deep)}
+button.ghost{background:transparent;color:var(--pool);border:1px solid var(--pool)}
+button.ghost:hover{background:var(--tile)}
+:focus-visible{outline:2px solid var(--pool);outline-offset:2px}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono);font-size:12px}
+
+/* login */
+#login{max-width:380px;margin:60px auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:grid;gap:12px}
+#login label{display:grid;gap:4px;font-size:13px;font-weight:600}
+.err{color:#c0392b;font-size:13px;font-weight:600}
+
+/* top */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.top h1{font-size:26px}
+.top h1 b{color:var(--pool)}
+.top .acts{display:flex;gap:8px;flex-wrap:wrap}
+
+.kpis{margin-top:18px;display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.kpi{background:var(--surface);padding:14px}
+.kpi span{display:block;font-size:12px;color:var(--muted)}
+.kpi strong{font-family:var(--f-display);font-size:26px;font-variant-numeric:tabular-nums}
+.origenes{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--surface)}
+
+.filtros{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filtros button{background:var(--surface);color:var(--ink);border:1px solid var(--line);font-weight:600;padding:7px 12px}
+.filtros button[aria-pressed="true"]{background:var(--pool);color:#fff;border-color:var(--pool)}
+.filtros input{max-width:240px;margin-left:auto}
+
+.lista{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c,var(--line));border-radius:10px;padding:14px;display:grid;gap:10px;min-width:0}
+.card .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.card .n{font-weight:700;font-size:17px;overflow-wrap:anywhere}
+.card .rows{display:grid;gap:3px;font-size:14px}
+.card .rows div{display:flex;justify-content:space-between;gap:10px}
+.card .rows span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.card .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card label{display:grid;gap:3px;font-size:12px;font-weight:600;color:var(--muted)}
+.card .btns{display:flex;gap:8px;flex-wrap:wrap}
+.card .btns > *{flex:1 1 120px;text-align:center}
+.wa{display:inline-block;text-decoration:none;font-weight:700;border-radius:9px;padding:10px 14px;background:#1d8a5a;color:#fff}
+.est{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;background:var(--c);color:#0c2a33}
+.vacio{margin-top:30px;padding:30px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px}
+
+@media (max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:480px){.kpis{grid-template-columns:repeat(2,1fr)}.filtros input{max-width:none;margin-left:0}.lista{grid-template-columns:1fr}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="tiles" aria-hidden="true"></div>
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <form id="login" hidden>
+    <h2>Panel Piscina360</h2>
+    <p class="muted">Entra con el usuario que creaste en Supabase.</p>
+    <label for="email">Correo<input id="email" type="email" autocomplete="username"></label>
+    <label for="pass">Clave<input id="pass" type="password" autocomplete="current-password"></label>
+    <div class="err" id="lerr" hidden></div>
+    <button type="submit">Entrar</button>
+  </form>
+
+  <!-- PANEL -->
+  <main id="panel" hidden>
+    <div class="top">
+      <h1>Piscina<b>360</b> · Clientes</h1>
+      <div class="acts">
+        <button class="ghost" id="reporte" type="button">Copiar reporte</button>
+        <button class="ghost" id="recargar" type="button">Actualizar</button>
+        <button class="ghost" id="salir" type="button">Salir</button>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+    <div class="origenes" id="origenes"></div>
+
+    <div class="filtros" id="filtros">
+      <button type="button" data-f="todos" aria-pressed="true">Todos</button>
+      <button type="button" data-f="nuevo">Nuevos</button>
+      <button type="button" data-f="contactado">Contactados</button>
+      <button type="button" data-f="enviado">Enviados al proveedor</button>
+      <button type="button" data-f="cerrado">Cerrados</button>
+      <button type="button" data-f="perdido">Perdidos</button>
+      <input id="buscar" placeholder="Buscar nombre, ciudad, código">
+    </div>
+
+    <div class="lista" id="lista"></div>
+  </main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ============ CONFIGURA AQUÍ ============ */
+////////// SUPABASE (los mismos datos que en index.html)
+const SUPA_URL = "https://ppjvrmpklqaasggsrckl.supabase.co";
+const SUPA_KEY = "sb_publishable_06zVT3r4225wFf8ph19vmQ_LDfptCP_";
+/* ======================================== */
+
+const $ = id => document.getElementById(id);
+const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+const ESTADOS = ["nuevo","contactado","enviado","cerrado","perdido"];
+const NOMBRE_EST = {nuevo:"Nuevo",contactado:"Contactado",enviado:"Enviado al proveedor",cerrado:"Cerrado",perdido:"Perdido"};
+let DATA = [], FILTRO = "todos";
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => "$" + Math.round(+n||0).toLocaleString("es-CO");
+const fecha = d => new Date(d).toLocaleString("es-CO",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+function toast(t){ $("toast").textContent=t; $("toast").hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>$("toast").hidden=true,2200); }
+async function copiar(t){
+  try{ await navigator.clipboard.writeText(t); }
+  catch(_){ const a=document.createElement("textarea"); a.value=t; document.body.appendChild(a); a.select(); try{document.execCommand("copy")}catch(e){} a.remove(); }
+  toast("Copiado");
+}
+
+////////// sesión
+async function iniciar(){
+  const { data:{ session } } = await db.auth.getSession();
+  if(session){ $("login").hidden=true; $("panel").hidden=false; cargar(); }
+  else { $("panel").hidden=true; $("login").hidden=false; }
+}
+$("login").addEventListener("submit", async e=>{
+  e.preventDefault(); $("lerr").hidden=true;
+  ////////// aviso si faltan las llaves
+  if(SUPA_KEY.startsWith("TU-") || SUPA_URL.includes("TU-PROYECTO")){
+    $("lerr").textContent="Faltan SUPA_URL y SUPA_KEY en panel.html (CONFIGURA AQUÍ)."; $("lerr").hidden=false; return;
+  }
+  const { error } = await db.auth.signInWithPassword({ email:$("email").value.trim(), password:$("pass").value });
+  ////////// muestra el error real
+  if(error){
+    const m = /invalid login/i.test(error.message) ? "Correo o clave incorrectos."
+            : /not confirmed/i.test(error.message) ? "Usuario sin confirmar: en Supabase marca Auto Confirm o confirma el correo."
+            : "Error de Supabase: " + error.message;
+    $("lerr").textContent=m; $("lerr").hidden=false; return;
+  }
+  iniciar();
+});
+$("salir").addEventListener("click", async ()=>{ await db.auth.signOut(); iniciar(); });
+
+////////// datos
+async function cargar(){
+  const { data, error } = await db.from("cotizaciones").select("*").order("created_at",{ascending:false});
+  if(error){ $("lista").innerHTML = `<div class="vacio">No se pudo leer la tabla: ${esc(error.message)}</div>`; return; }
+  DATA = data || [];
+  pintar();
+}
+$("recargar").addEventListener("click", cargar);
+
+function kpis(){
+  const n = e => DATA.filter(d=>d.estado===e).length;
+  const activos = DATA.filter(d=>d.estado!=="perdido" && d.estado!=="cerrado");
+  const pipeline = activos.reduce((s,d)=>s+((+d.estimado_min||0)+(+d.estimado_max||0))/2,0);
+  const vendido = DATA.filter(d=>d.estado==="cerrado").reduce((s,d)=>s+(+d.valor_cierre||0),0);
+  return {total:DATA.length, nuevo:n("nuevo"), enviado:n("enviado"), cerrado:n("cerrado"), pipeline, vendido};
+}
+
+function pintar(){
+  const k = kpis();
+  $("kpis").innerHTML = [
+    ["Cotizaciones", k.total], ["Nuevas", k.nuevo], ["Enviadas al proveedor", k.enviado],
+    ["Cerradas", k.cerrado], ["En negociación", fmt(k.pipeline)], ["Vendido", fmt(k.vendido)]
+  ].map(([a,b])=>`<div class="kpi"><span>${a}</span><strong>${b}</strong></div>`).join("");
+
+  const org = {};
+  DATA.forEach(d=>{ const o=d.origen||"directo"; org[o]=(org[o]||0)+1; });
+  ////////// conteo por línea
+  const lin = {}; DATA.forEach(d=>{ const l=d.linea||"piscinas"; lin[l]=(lin[l]||0)+1; });
+  $("origenes").innerHTML = Object.entries(lin).map(([l,c])=>`<span class="chip">${l==="fumigacion"?"Fumigación":"Piscinas"}: ${c}</span>`).join("") + Object.entries(org).sort((a,b)=>b[1]-a[1])
+    .map(([o,c])=>`<span class="chip">${esc(o)}: ${c}</span>`).join("");
+
+  const q = $("buscar").value.trim().toLowerCase();
+  const rows = DATA.filter(d => (FILTRO==="todos"||d.estado===FILTRO) &&
+    (!q || [d.nombre,d.ciudad,d.codigo,d.servicio,d.celular,d.linea].join(" ").toLowerCase().includes(q)));
+
+  if(!rows.length){
+    $("lista").innerHTML = `<div class="vacio">${DATA.length ? "Nada con ese filtro." : "Todavía no hay cotizaciones. Cuando alguien cotice en la página, aparece aquí."}</div>`;
+    return;
+  }
+  $("lista").innerHTML = rows.map(d=>{
+    const tel = String(d.celular||"").replace(/\D/g,"");
+    const telWa = tel.length===10 ? "57"+tel : tel;
+    return `
+    <article class="card" style="--c:var(--${esc(d.estado)})" data-id="${d.id}">
+      <div class="h"><span class="n">${esc(d.nombre)}</span><span class="est">${NOMBRE_EST[d.estado]||esc(d.estado)}</span></div>
+      <div class="mono muted">${d.linea==="fumigacion"?"FUMIGACIÓN":"PISCINAS"} · ${esc(d.codigo)} · ${fecha(d.created_at)} · ${esc(d.origen||"directo")}</div>
+      <div class="rows">
+        <div><span>Servicio</span><span>${esc(d.servicio)}</span></div>
+        <div><span>Cliente</span><span>${esc(d.cliente_tipo)} · ${esc(d.ciudad)}</span></div>
+        <div><span>Medidas</span><span>${d.linea==="fumigacion" ? esc(d.area_m2)+" m²" : `${esc(d.largo)} × ${esc(d.ancho)} × ${esc(d.prof)} m · ${esc(d.m3)} m³`}</span></div>
+        <div><span>Estimado</span><span>${fmt(d.estimado_min)} – ${fmt(d.estimado_max)}</span></div>
+        <div><span>Celular</span><span class="mono">${esc(d.celular)}</span></div>
+      </div>
+      <div class="row2">
+        <label>Estado
+          <select data-k="estado">${ESTADOS.map(e=>`<option value="${e}" ${e===d.estado?"selected":""}>${NOMBRE_EST[e]}</option>`).join("")}</select>
+        </label>
+        <label>Valor cerrado
+          <input data-k="valor_cierre" type="number" inputmode="numeric" value="${d.valor_cierre??""}" placeholder="0">
+        </label>
+      </div>
+      <label>Notas<textarea data-k="notas" placeholder="Ej. visita el sábado, quiere financiar">${esc(d.notas)}</textarea></label>
+      <div class="btns">
+        <button type="button" data-a="guardar">Guardar</button>
+        <button type="button" class="ghost" data-a="proveedor">Copiar para proveedor</button>
+        <a class="wa" href="https://wa.me/${telWa}" target="_blank" rel="noopener">WhatsApp cliente</a>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+////////// acciones en tarjetas
+$("lista").addEventListener("click", async e=>{
+  const b = e.target.closest("button[data-a]"); if(!b) return;
+  const card = b.closest(".card"); const id = +card.dataset.id;
+  const d = DATA.find(x=>x.id===id);
+  if(b.dataset.a==="guardar"){
+    const upd = {
+      estado: card.querySelector('[data-k="estado"]').value,
+      valor_cierre: card.querySelector('[data-k="valor_cierre"]').value === "" ? null : +card.querySelector('[data-k="valor_cierre"]').value,
+      notas: card.querySelector('[data-k="notas"]').value
+    };
+    const { error } = await db.from("cotizaciones").update(upd).eq("id", id);
+    if(error){ toast("No se guardó: "+error.message); return; }
+    Object.assign(d, upd); pintar(); toast("Guardado");
+  }
+  if(b.dataset.a==="proveedor"){
+    ////////// sin datos del cliente: tú controlas el contacto
+    copiar(
+`Trabajo ${d.codigo}
+Servicio: ${d.servicio}
+Tipo de cliente: ${d.cliente_tipo}
+Ciudad: ${d.ciudad}
+Medidas: ${d.linea==="fumigacion" ? d.area_m2+" m²" : `${d.largo} x ${d.ancho} x ${d.prof} m (${d.m3} m³)`}
+Notas: ${d.notas || "-"}
+¿Me das precio y fecha de visita?`);
+  }
+});
+
+$("filtros").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-f]"); if(!b) return;
+  FILTRO = b.dataset.f;
+  document.querySelectorAll("#filtros button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+  pintar();
+});
+$("buscar").addEventListener("input", pintar);
+
+////////// reporte para mostrar al proveedor / comprador
+$("reporte").addEventListener("click", ()=>{
+  const k = kpis();
+  const porServ = {}; DATA.forEach(d=>porServ[d.servicio]=(porServ[d.servicio]||0)+1);
+  const porLinea = {}; DATA.forEach(d=>{const l=d.linea==="fumigacion"?"Fumigación":"Piscinas"; porLinea[l]=(porLinea[l]||0)+1;});
+  const porCiudad = {}; DATA.forEach(d=>porCiudad[d.ciudad]=(porCiudad[d.ciudad]||0)+1);
+  const top = o => Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([a,b])=>`  - ${a}: ${b}`).join("\n");
+  const desde = DATA.length ? new Date(DATA[DATA.length-1].created_at).toLocaleDateString("es-CO") : "-";
+  copiar(
+`REPORTE PISCINA360 (desde ${desde})
+Cotizaciones recibidas: ${k.total}
+Cerradas: ${k.cerrado}
+En negociación: ${fmt(k.pipeline)}
+Vendido: ${fmt(k.vendido)}
+
+Por línea:
+${top(porLinea)}
+
+Por servicio:
+${top(porServ)}
+
+Por ciudad:
+${top(porCiudad)}`);
+});
+
+db.auth.onAuthStateChange(()=>{});
+iniciar();
+</script>
+</body>
+</html>
